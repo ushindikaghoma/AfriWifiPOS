@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Mon profile"
+        android:id="@+id/action_mon_profil"/>
+
+    <item android:title="Déconnexion"
+        android:id="@+id/action_deconnexion"/>
+
+
+    <item
+        android:title="PARAMETRES">
+        <menu>
+            <item
+                android:id="@+id/action_settings"
+                android:title="Configuration"/>
+            <item android:title="Synchroniser"
+                android:id="@+id/action_sync"/>
+        </menu>
+    </item>
+</menu>

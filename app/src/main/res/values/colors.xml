@@ -3,6 +3,7 @@
     <color name="colorPrimary">#91264B</color>
     <color name="colorPrimaryDark">#91264B</color>
     <color name="colorAccent">#91264B</color>
+    <color name="kaki">#3E3E3E</color>
 
     <!--colors for modern ui-->
     <color name="whiteTextColor">#fff</color>
