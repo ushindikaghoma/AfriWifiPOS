@@ -25,7 +25,14 @@ public class ComptabiliteResponse {
     private String designationCreditSortie;
     @SerializedName("NumMvtCompte")
     private String numMvtCompte;
-
+    @SerializedName("NumCompte")
+    int numCompte;
+    @SerializedName("Details")
+    private String Details;
+    @SerializedName("CodeLibele")
+    private String CodeLibele ;
+    @SerializedName("LibeleDeCompte")
+    String libeleDeCompte;
 
     public ComptabiliteResponse() {
 
@@ -117,5 +124,37 @@ public class ComptabiliteResponse {
 
     public void setDesignationCreditSortie(String designationCreditSortie) {
         this.designationCreditSortie = designationCreditSortie;
+    }
+
+    public int getNumCompte() {
+        return numCompte;
+    }
+
+    public void setNumCompte(int numCompte) {
+        this.numCompte = numCompte;
+    }
+
+    public String getDetails() {
+        return Details;
+    }
+
+    public void setDetails(String details) {
+        Details = details;
+    }
+
+    public String getCodeLibele() {
+        return CodeLibele;
+    }
+
+    public void setCodeLibele(String codeLibele) {
+        CodeLibele = codeLibele;
+    }
+
+    public String getLibeleDeCompte() {
+        return libeleDeCompte;
+    }
+
+    public void setLibeleDeCompte(String libeleDeCompte) {
+        this.libeleDeCompte = libeleDeCompte;
     }
 }

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/transaction_date_debut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Date debut"
+                android:inputType="date"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/transaction_date_fin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Date fin"
+                android:inputType="date"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        android:layout_marginTop="0dp"
+        app:cardBackgroundColor="@color/whiteBodyColor"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_account_balance_wallet_24"
+                    android:backgroundTint="@color/colorPrimary"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Balance"/>
+                    <TextView
+                        android:id="@+id/transaction_display_balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"/>
+                    <ProgressBar
+                        android:id="@+id/transaction_progress_balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        android:layout_marginTop="10dp"
+        app:cardBackgroundColor="@color/whiteBodyColor"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ProgressBar
+                android:id="@+id/transaction_progress_recycle"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/all_transaction_recycle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

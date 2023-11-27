@@ -2,6 +2,7 @@ package com.soft.afri_wifi.Ticket.data;
 
 import com.soft.afri_wifi.Article.data.ArticleResponse;
 import com.soft.afri_wifi.Operation.OperationResponse;
+import com.soft.afri_wifi.Operation.Reponse;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface TicketConnection {
     Call<List<ArticleResponse>> getRadomTicket(@Query("codeDepot") String codeDepot,
                                                @Query("catArticle") int catArticle);
     @POST("api/Ticket/SaveMvtTicket")
-    Call<Integer> insertMvtTicket(@Body MvtTicketReponse mvtTicketReponse);
+    Call<Reponse> insertMvtTicket(@Body MvtTicketReponse mvtTicketReponse);
     @GET("api/Ticket/UpdateEtatForfait")
     Call<String> updateEtatTicket(@Query("username") String userName,
                                   @Query("password") String password );

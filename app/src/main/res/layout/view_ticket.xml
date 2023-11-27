@@ -65,9 +65,17 @@
                     android:layout_height="match_parent"
                     android:text="4$"
                     android:textStyle="bold"
-                    android:textSize="30sp"
+                    android:textSize="24sp"
                     android:textColor="@color/whiteBodyColor"
                     android:padding="8dp"
+                    android:gravity="center"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="CDF"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:textColor="@color/whiteBodyColor"
                     android:gravity="center"/>
 
             </LinearLayout>

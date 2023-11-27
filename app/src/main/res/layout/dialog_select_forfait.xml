@@ -161,8 +161,10 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textSize="25sp"
-                    android:layout_marginRight="10dp"/>
+                    android:textColor="@color/whiteBodyColor"
+                    android:layout_marginRight="10dp"
+                    android:padding="14dp"
+                    android:background="@color/contentBodyColor"/>
                 <Button
                     android:id="@+id/dialog_forfait_confirmer_btn"
                     android:layout_width="match_parent"

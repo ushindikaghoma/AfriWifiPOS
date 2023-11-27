@@ -32,7 +32,8 @@ public class DataFromAPI extends ConnexionAPI{
         }
 
        // server = "192.168.1.30/TouchBistroIshango"; local
-        server = "afrisofttech-001-site52.btempurl.com"; // en ligne
+        //server = "afrisofttech-001-site52.btempurl.com"; // en ligne
+        server = "192.168.1.39/AfriWifi"; // en ligne
 
         postClient = "http://"+server+"/api/Clients/Create";
         //URL = server;

@@ -24,11 +24,13 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.soft.afri_wifi.Article.data.ArticleResponse;
+import com.soft.afri_wifi.Comptabilite.Comptabilite;
 import com.soft.afri_wifi.Comptabilite.data.ComptabiliteRepository;
 import com.soft.afri_wifi.Comptabilite.data.ComptabiliteResponse;
 import com.soft.afri_wifi.DataBase.DataFromAPI;
 import com.soft.afri_wifi.Operation.OperationRepository;
 import com.soft.afri_wifi.Operation.OperationResponse;
+import com.soft.afri_wifi.Operation.Reponse;
 import com.soft.afri_wifi.R;
 
 import java.text.SimpleDateFormat;
@@ -49,6 +51,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
     TicketRepository ticketRepository;
 
     SharedPreferences preferences;
+    ArrayList<ArticleResponse>list_local_ticket;
     public static SharedPreferences.Editor editor;
     String pref_code_depot, pref_compte_user, pref_compte_stock_user,nom_user, pref_mode_type,
             todayDate, prefix_operation;
@@ -91,7 +94,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         TicketResponse ticketResponse = list.get(position);
         //holder.cardViewEmpty.setVisibility(View.GONE);
         holder.textView_designation_tickect.setText("" + ticketResponse.getDesignationTicket());
-        holder.textView_prix_unitaire_ticket.setText("" + ticketResponse.getPrixTicket()+"$");
+        holder.textView_prix_unitaire_ticket.setText("" + ticketResponse.getPrixTicket()+"");
         holder.textView_validite_ticket.setText("" + ticketResponse.getValiditeTicket());
 
         holder.linearLayoutTicket.setOnClickListener(new View.OnClickListener() {
@@ -120,12 +123,18 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                 prix_forfait.setText(""+list.get(position).getPrixTicket()+"$");
                 validite_forfait.setText(list.get(position).getValiditeTicket());
 
+                if (list.size() <0)
+                {
+                    confirmer_vente.setEnabled(false);
+                }
 
                 LoadInfosTicket(pref_code_depot,
-                        Integer.valueOf(list.get(position).getCatArticle()), username, password);
+                        Integer.valueOf(list.get(position).getCatArticle()),
+                        username, password, nom_forfait, validite_forfait, editTextLibele);
 
                 String libelle = "Vente en cash du" + " " + nom_forfait.getText().toString()
-                        + " de" + " " +validite_forfait.getText().toString()+ " à" + " ";
+                        + " de" + " " +validite_forfait.getText().toString()+" "+
+                        "ID_CONN:"+"("+username.getText().toString()+","+password.getText().toString()+")"+" "+"à";
                 editTextLibele.setText(libelle);
 
 
@@ -150,10 +159,11 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                             Toast.makeText(context, "Ticket invalide", Toast.LENGTH_SHORT).show();
                         }else {
 
-                            new AsyncCreateOperation(libelle, progressBar, list.get(position).getPrixTicket(),
+                            new AsyncCreateOperation(editTextLibele.getText().toString(), progressBar, list.get(position).getPrixTicket(),
                                     list.get(position).getPrixTicket(), dialog, myView,
                                     list.get(position).getCatArticle(),list.get(position).getIdTicket(),
-                                    username.getText().toString(), password.getText().toString()).execute();
+                                    username.getText().toString(), password.getText().toString(),
+                                    pref_code_depot).execute();
                         }
 
 
@@ -166,7 +176,9 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
     }
 
     public void LoadInfosTicket(String codeDepot, int catArticle,
-                                TextView username, TextView password)
+                                TextView username, TextView password,
+                                TextView nom_forfait, TextView validite_forfait,
+                                EditText editTextLibele)
     {
         Call<List<ArticleResponse>> call_liste_fournisseur = ticketRepository.ticketConnexion().getRadomTicket(codeDepot, catArticle);
         //loadTicket.setVisibility(View.VISIBLE);
@@ -178,11 +190,17 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     //loadTicket.setVisibility(View.GONE);
                     double _sortie_totale = 0;
                     double _vente_totale = 0;
-                    ArrayList<ArticleResponse>list_local_ticket = new ArrayList<>();
+                    list_local_ticket = new ArrayList<>();
                     for (int a = 0; a < response.body().size(); a++)
                     {
                         username.setText(response.body().get(a).getUserName());
                         password.setText(response.body().get(a).getPassword());
+
+                        String libelle = "Vente en cash du" + " " + nom_forfait.getText().toString()
+                                + " de" + " " +validite_forfait.getText().toString()+", "+
+                                "ID_LOGIN:"+"("+username.getText().toString()+","+password.getText().toString()+")"+" "+"à";
+                        editTextLibele.setText(libelle);
+
                     }
 
                 }
@@ -201,36 +219,76 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                                  String username, String password   )
     {
         ComptabiliteRepository comptabiliteRepository = ComptabiliteRepository.getInstance();
-        ComptabiliteResponse comptabiliteResponse = new ComptabiliteResponse();
+        ComptabiliteResponse comptabiliteResponseDebit = new ComptabiliteResponse();
+        ComptabiliteResponse comptabiliteResponseCredit = new ComptabiliteResponse();
 
-        comptabiliteResponse.setNumOperation(numOperation);
-        comptabiliteResponse.setLibelle(libele);
-        comptabiliteResponse.setNumCompteDebitEntree(numCompteDebitEntree);
-        comptabiliteResponse.setNumCompteCreditSortie(numCompteCreditSortie);
-        comptabiliteResponse.setMontant(montant);
-        comptabiliteResponse.setQte(1);
-        comptabiliteResponse.setDesignationCompteDebit("");
-        comptabiliteResponse.setDesignationCreditSortie("");
-        comptabiliteRepository.comptabiliteConnexion().insertMvtCompte(comptabiliteResponse).enqueue(new Callback<Integer>()
+
+        // DEBIT
+
+        comptabiliteResponseDebit.setNumCompte(numCompteDebitEntree);
+        comptabiliteResponseDebit.setLibeleDeCompte("");
+        comptabiliteResponseDebit.setEntree(montant);
+        comptabiliteResponseDebit.setDetails(libele);
+        comptabiliteResponseDebit.setCodeLibele("");
+        comptabiliteResponseDebit.setQte(1);
+        comptabiliteResponseDebit.setSortie(0);
+        comptabiliteResponseDebit.setNumOperation(numOperation);
+        comptabiliteResponseDebit.setNumMvtCompte("");
+
+        // CREDIT
+
+        comptabiliteResponseCredit.setNumCompte(numCompteCreditSortie);
+        comptabiliteResponseCredit.setLibeleDeCompte("");
+        comptabiliteResponseCredit.setEntree(0);
+        comptabiliteResponseCredit.setDetails(libele);
+        comptabiliteResponseCredit.setCodeLibele("");
+        comptabiliteResponseCredit.setQte(1);
+        comptabiliteResponseCredit.setSortie(montant);
+        comptabiliteResponseCredit.setNumOperation(numOperation);
+        comptabiliteResponseCredit.setNumMvtCompte("");
+
+        comptabiliteRepository.comptabiliteConnexion().SaveMvtCompteOneTwo(comptabiliteResponseDebit).enqueue(new Callback<Reponse>()
         {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<Reponse> call, Response<Reponse> response) {
                 if (response.isSuccessful())
                 {
                     Log.e("Achat", ""+response.body());
 
-//                    String update_operation = dataFromAPI.UpdatEtatOperation(1, numOperation);
-//
-//                    if (update_operation.equals("1"))
-//                    {
-//                        Toast.makeText(NouveauAchatActivity.this, "Operation validée", Toast.LENGTH_LONG).show();
-//                        finish();
-//                    }else
-//                    {
-//                        Toast.makeText(NouveauAchatActivity.this, "Echec"+numOperation +" "+update_operation, Toast.LENGTH_LONG).show();
-//                    }
 
-                    //updateOperation(1, numOperation);
+                    //updateEtatTicket(username, password);
+
+                }
+                else
+                {
+                    switch (response.code())
+                    {
+                        case 404:
+                            Toast.makeText(context, "Serveur introuvable", Toast.LENGTH_LONG).show();
+                            break;
+                        case 500:
+                            Toast.makeText(context, "Serveur en pane",Toast.LENGTH_LONG).show();
+                            break;
+                        default:
+                            Toast.makeText(context, "Erreur inconnu", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Reponse> call, Throwable t) {
+                Toast.makeText(context, "Probleme de connection", Toast.LENGTH_LONG).show();
+            }
+        });
+        comptabiliteRepository.comptabiliteConnexion().SaveMvtCompteOneTwo(comptabiliteResponseCredit).enqueue(new Callback<Reponse>()
+        {
+            @Override
+            public void onResponse(Call<Reponse> call, Response<Reponse> response) {
+                if (response.isSuccessful())
+                {
+                    Log.e("Achat", ""+response.body());
+
 
                     updateEtatTicket(username, password);
 
@@ -253,7 +311,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<Reponse> call, Throwable t) {
                 Toast.makeText(context, "Probleme de connection", Toast.LENGTH_LONG).show();
             }
         });
@@ -264,7 +322,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
     public class AsyncCreateOperation extends AsyncTask<Void, Void, Void>
     {
-        String libelle, codeArticle,catArticle,username,password;
+        String libelle, codeDepot,catArticle,username,password;
         ProgressBar progressBarSaveoperation;
         AlertDialog dialog;
         View view;
@@ -274,7 +332,9 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         public AsyncCreateOperation(String libelle, ProgressBar progressBarSaveoperation,
                                     double totalMontant, double prixRevien,
                                     AlertDialog dialog, View view,
-                                    String catArticle, int idTicket, String username, String password) {
+                                    String catArticle, int idTicket,
+                                    String username, String password,
+                                    String codeDepot) {
             this.libelle = libelle;
             this.progressBarSaveoperation = progressBarSaveoperation;
             this.totalMontant = totalMontant;
@@ -285,6 +345,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             this.idTicket = idTicket;
             this.username = username;
             this.password = password;
+            this.codeDepot = codeDepot;
 
         }
 
@@ -320,7 +381,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             SaveNewOperationAttente(libelle, totalMontant, prixRevien,
                                         dialog, view,
                                         catArticle, idTicket,
-                                        username, password);
+                                        username, password, codeDepot);
 
             return null;
         }
@@ -328,7 +389,8 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
     public class AsyncGetLatestOp extends AsyncTask<Void, Void, Void>
     {
-        String num_operation, codeArticle, libelle, catArticle, userName, password;
+        String num_operation,
+                codeDepot, libelle, catArticle, userName, password;
         double totalMontant, prixRevien, quantite;
         AlertDialog dialog;
         View view;
@@ -337,7 +399,8 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         public AsyncGetLatestOp(String libelle,double totalMontant,
                                 double prixRevien,AlertDialog dialog,
                                 View view, String catArticle,
-                                String userName, String password, int idTicket) {
+                                String userName, String password,
+                                int idTicket, String codeDepot) {
 
             this.libelle = libelle;
             this.totalMontant = totalMontant;
@@ -348,6 +411,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             this.userName = userName;
             this.password = password;
             this.idTicket = idTicket;
+            this.codeDepot = codeDepot;
         }
 
         @Override
@@ -382,7 +446,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
 
                 SaveMvtTicket(num_operation, totalMontant, prixRevien, catArticle,
-                        idTicket, userName, password, libelle);
+                        idTicket, userName, password, libelle, codeDepot);
 
 
             return null;
@@ -392,13 +456,14 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
     public void SaveMvtTicket(String numOperation, double montant, double prix,
                               String catArticle, int idTicket, String userName,
-                              String password, String libelle)
+                              String password, String libelle, String codeDepot)
     {
         TicketRepository ticketRepository = TicketRepository.getInstance();
         MvtTicketReponse mvtTicketReponse = new MvtTicketReponse();
 
         mvtTicketReponse.setNumOperation(numOperation);
         mvtTicketReponse.setCatArticle(catArticle);
+        mvtTicketReponse.setCodeDepot(codeDepot);
         mvtTicketReponse.setUserName(userName);
         mvtTicketReponse.setPassword(password);
         mvtTicketReponse.setEtat(0);
@@ -406,29 +471,28 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         mvtTicketReponse.setEntree(0);
         mvtTicketReponse.setSortie(montant);
         mvtTicketReponse.setIdTicket(idTicket);
-        ticketRepository.ticketConnexion().insertMvtTicket(mvtTicketReponse).enqueue(new Callback<Integer>()
+        ticketRepository.ticketConnexion().insertMvtTicket(mvtTicketReponse).enqueue(new Callback<Reponse>()
         {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<Reponse> call, Response<Reponse> response) {
                 if (response.isSuccessful())
                 {
-                    Log.e("Ticket", ""+response.body());
+                    //Log.e("Ticket Mvt", ""+response.body());
 
-//                    String update_operation = dataFromAPI.UpdatEtatOperation(1, numOperation);
-//
-//                    if (update_operation.equals("1"))
-//                    {
-//                        Toast.makeText(NouveauAchatActivity.this, "Operation validée", Toast.LENGTH_LONG).show();
-//                        finish();
-//                    }else
-//                    {
-//                        Toast.makeText(NouveauAchatActivity.this, "Echec"+numOperation +" "+update_operation, Toast.LENGTH_LONG).show();
-//                    }
+                   Reponse saveee = response.body();
+                    boolean success = saveee.isSucces();
+                    String message = saveee.getMessage();
+                    Log.e("Ticket Mvt",response.body().toString());
+                    if(success){
+                        NouveauMvtCompte(numOperation, libelle, Comptabilite.compteVente,
+                                Integer.valueOf(pref_compte_user),
+                                montant, userName, password);
+                    }else{
+                        Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                    }
 
                     //updateOperation(1, numOperation);
-                    NouveauMvtCompte(numOperation, libelle,701001,
-                            572038,
-                            montant, userName, password);
+
 
                 }
                 else
@@ -449,8 +513,8 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
-                Toast.makeText(context, "Probleme de connection", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<Reponse> call, Throwable t) {
+                Toast.makeText(context, "Probleme de connection"+"Usher", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -479,7 +543,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
     private void SaveNewOperationAttente(String libelle, double total,
                                          double prixRevien, AlertDialog dialog,
                                          View view, String catArticle, int idTicket,
-                                         String username, String password)
+                                         String username, String password, String codeDepot)
     {
 
         OperationRepository operationRepository = OperationRepository.getInstance();
@@ -495,17 +559,23 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         operationResponse.setDateSysteme(todayDate);
         operationResponse.setValider(0);
         //operationAttenteResponse.setValiderPar("none");
-        operationRepository.operationConnexion().insertOperationAttenteStation(operationResponse).enqueue(new Callback<Integer>()
+        operationRepository.operationConnexion().SaveOperation(operationResponse).enqueue(new Callback<Reponse>()
         {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<Reponse> call, Response<Reponse> response) {
                 if (response.isSuccessful())
                 {
-                    //Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
-                    Log.e("Ope",""+response);
+                    Reponse saveee = response.body();
+                    boolean success = saveee.isSucces();
+                    String message = saveee.getMessage();
+                    Log.e("OPERATION",response.body().toString());
+                    if(success){
+                        new AsyncGetLatestOp(libelle, total, prixRevien, dialog, view,
+                                catArticle, username, password, idTicket, codeDepot).execute();
+                    }else{
+                        Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
+                    }
 
-                    new AsyncGetLatestOp(libelle, total, prixRevien, dialog, view,
-                            catArticle, username, password, idTicket).execute();
                 }
                 else
                 {
@@ -525,7 +595,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<Reponse> call, Throwable t) {
                 Toast.makeText(context, "Probleme de connection", Toast.LENGTH_LONG).show();
             }
         });

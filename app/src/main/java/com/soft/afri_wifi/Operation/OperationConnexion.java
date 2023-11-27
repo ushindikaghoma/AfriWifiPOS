@@ -14,7 +14,7 @@ public interface OperationConnexion {
 //    @POST("api/Operation/CreateOpAttenteStation")
     Call<Integer> insertOperationAttenteStation(@Body OperationResponse operationResponse);
 
-    @POST("api/Operation/SaveOperation")
+    @POST("api/Operation/SaveOperationTicket")
     Call<Reponse> SaveOperation(@Body OperationResponse operationResponse);
     @POST("api/Operation/SaveOperationAttente")
     Call<Reponse> SaveOperationAttente(@Body OperationResponse operationResponse);
