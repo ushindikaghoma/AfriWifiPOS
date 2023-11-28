@@ -120,7 +120,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                 progressBar.setVisibility(View.GONE);
 
                 nom_forfait.setText("FORFAIT: "+list.get(position).getDesignationTicket());
-                prix_forfait.setText(""+list.get(position).getPrixTicket()+"$");
+                prix_forfait.setText(""+list.get(position).getPrixTicket()+"CDF");
                 validite_forfait.setText(list.get(position).getValiditeTicket());
 
                 if (list.size() <0)
@@ -471,6 +471,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         mvtTicketReponse.setEntree(0);
         mvtTicketReponse.setSortie(montant);
         mvtTicketReponse.setIdTicket(idTicket);
+        mvtTicketReponse.setCodeValidite("");
         ticketRepository.ticketConnexion().insertMvtTicket(mvtTicketReponse).enqueue(new Callback<Reponse>()
         {
             @Override

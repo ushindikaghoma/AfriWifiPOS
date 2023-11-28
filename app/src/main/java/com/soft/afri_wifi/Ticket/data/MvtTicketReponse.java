@@ -23,6 +23,8 @@ public class MvtTicketReponse {
     double sortie;
     @SerializedName("IdTicket")
     int idTicket;
+    @SerializedName("CodeValidite")
+    String codeValidite;
 
     public MvtTicketReponse() {
     }
@@ -105,5 +107,13 @@ public class MvtTicketReponse {
 
     public void setIdTicket(int idTicket) {
         this.idTicket = idTicket;
+    }
+
+    public String getCodeValidite() {
+        return codeValidite;
+    }
+
+    public void setCodeValidite(String codeValidite) {
+        this.codeValidite = codeValidite;
     }
 }

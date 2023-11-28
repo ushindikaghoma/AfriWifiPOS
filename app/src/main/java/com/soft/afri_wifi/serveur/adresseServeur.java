@@ -26,9 +26,9 @@ public class adresseServeur {
        // adresseIP ="http://192.168.11.2:8081";
         adresseIP ="http://192.168.126.162:8081";
         adresseIP ="http://192.168.1.100/AfriWifi";
-//        adresseIP ="http://afrisofttech-001-site44.btempurl.com";
+        adresseIP ="http://afrisofttech-002-site38.btempurl.com";
 //        adresseIP ="http://192.168.252.43/TouchBistroIshango";
-        adresseIP ="http://192.168.1.39/AfriWifi";
+        //adresseIP ="http://192.168.1.21/AfriWifi";
     }
 
     public String getAdresseIP() {
