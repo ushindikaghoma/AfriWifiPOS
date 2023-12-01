@@ -1,6 +1,7 @@
 package com.soft.afri_wifi;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 
 import android.content.Context;
@@ -21,8 +22,11 @@ public class MainActivity extends AppCompatActivity {
     String adresseIP,val,authLogin, mode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         shared = getSharedPreferences("maPreference", Context.MODE_PRIVATE);
         editorr = shared.edit();
@@ -45,18 +49,19 @@ public class MainActivity extends AppCompatActivity {
 
                     if(authLogin.length() == 0){
                         //utilisateu pages login
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivity(intent);
                         finish();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
                     }else{
                         //page d'acceuil
+                        finish();
                         Intent intent = new Intent(getApplicationContext(), ContentMenuActivity.class);
                         startActivity(intent);
-                        finish();
+
                     }
 
 //                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-//                    finish();
+                    finish();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

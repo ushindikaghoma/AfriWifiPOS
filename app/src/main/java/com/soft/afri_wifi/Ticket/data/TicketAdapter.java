@@ -5,9 +5,11 @@ import static android.content.Context.MODE_PRIVATE;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +25,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.soft.afri_wifi.Article.data.ArticleResponse;
 import com.soft.afri_wifi.Comptabilite.Comptabilite;
 import com.soft.afri_wifi.Comptabilite.data.ComptabiliteRepository;
 import com.soft.afri_wifi.Comptabilite.data.ComptabiliteResponse;
 import com.soft.afri_wifi.DataBase.DataFromAPI;
+import com.soft.afri_wifi.Menu.ContentMenuActivity;
 import com.soft.afri_wifi.Operation.OperationRepository;
 import com.soft.afri_wifi.Operation.OperationResponse;
 import com.soft.afri_wifi.Operation.Reponse;
@@ -58,9 +63,13 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
     DataFromAPI dadataFromAPI;
     Calendar calendar;
-    public TicketAdapter(Context context) {
+    TextView _username, _password;
+    public TicketAdapter(Context context, TextView username, TextView password) {
         this.list = new ArrayList<>();
         this.context = context;
+
+        _username = username;
+        _password = password;
 
         ticketRepository = TicketRepository.getInstance();
 
@@ -103,6 +112,14 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
                 //Toast.makeText(context, ""+pref_code_depot+" "+list.get(position).getCatArticle(),Toast.LENGTH_SHORT).show();
 
+                if (!_username.getText().toString().trim().equals("")
+                    || !_password.getText().toString().trim().equals(""))
+                {
+                    _username.setText("");
+                    _password.setText("");
+                }
+
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 View myView = LayoutInflater.from(context).inflate(R.layout.dialog_select_forfait,null);
                 builder.setView(myView);
@@ -116,8 +133,11 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                 Button confirmer_vente = myView.findViewById(R.id.dialog_forfait_confirmer_btn);
                 ProgressBar progressBar = myView.findViewById(R.id.progress_dailog_forfait);
                 EditText editTextLibele = myView.findViewById(R.id.editTextLibele);
+                TextInputLayout inputEditText = myView.findViewById(R.id.textInputCommentaire);
+                EditText nom_client = myView.findViewById(R.id.editTextNomClient);
 
                 progressBar.setVisibility(View.GONE);
+                inputEditText.setVisibility(View.GONE);
 
                 nom_forfait.setText("FORFAIT: "+list.get(position).getDesignationTicket());
                 prix_forfait.setText(""+list.get(position).getPrixTicket()+"CDF");
@@ -146,6 +166,15 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
+
+                        if (confirmer_vente.isEnabled())
+                        {
+
+                        }else
+                        {
+                            _username.setText("USER NAME:  "+username.getText().toString());
+                            _password.setText("PASSWORD:  "+password.getText().toString());
+                        }
                     }
                 });
 
@@ -153,19 +182,31 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     @Override
                     public void onClick(View view) {
 
+
+
                         if (username.getText().toString().trim().equals("Null")
-                                || password.getText().toString().trim().equals("Null") )
+                                || password.getText().toString().trim().equals("Null")
+                                || username.getText().toString().trim().equals("")
+                                || password.getText().toString().trim().equals("") )
                         {
                             Toast.makeText(context, "Ticket invalide", Toast.LENGTH_SHORT).show();
                         }else {
 
-                            new AsyncCreateOperation(editTextLibele.getText().toString(), progressBar, list.get(position).getPrixTicket(),
+                        }
+                        if (nom_client.getText().toString().trim().equals(""))
+                        {
+                            Toast.makeText(context, "Veillez saisir le mom du client", Toast.LENGTH_SHORT).show();
+                        }else
+                        {
+                            String _libele = editTextLibele.getText().toString()+"à"+" "+nom_client.getText().toString();
+
+                            new AsyncCreateOperation(_libele, progressBar, list.get(position).getPrixTicket(),
                                     list.get(position).getPrixTicket(), dialog, myView,
                                     list.get(position).getCatArticle(),list.get(position).getIdTicket(),
                                     username.getText().toString(), password.getText().toString(),
-                                    pref_code_depot).execute();
+                                    pref_code_depot, inputEditText, username,
+                                    password,nom_client, confirmer_vente).execute();
                         }
-
 
 
                     }
@@ -198,7 +239,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
                         String libelle = "Vente en cash du" + " " + nom_forfait.getText().toString()
                                 + " de" + " " +validite_forfait.getText().toString()+", "+
-                                "ID_LOGIN:"+"("+username.getText().toString()+","+password.getText().toString()+")"+" "+"à";
+                                "ID_LOGIN:"+"("+username.getText().toString()+","+password.getText().toString()+")"+" ";
                         editTextLibele.setText(libelle);
 
                     }
@@ -328,13 +369,19 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         View view;
         double totalMontant, prixRevien, quantite;
         int  idTicket;
+        TextInputLayout inputEditText;
+        TextView txtUserName, txtPassword;
+        EditText nom_client;
+        Button vendre;
 
         public AsyncCreateOperation(String libelle, ProgressBar progressBarSaveoperation,
                                     double totalMontant, double prixRevien,
                                     AlertDialog dialog, View view,
                                     String catArticle, int idTicket,
                                     String username, String password,
-                                    String codeDepot) {
+                                    String codeDepot, TextInputLayout inputEditText,
+                                    TextView txtUserName, TextView txtPassword,
+                                    EditText nom_client, Button vendre) {
             this.libelle = libelle;
             this.progressBarSaveoperation = progressBarSaveoperation;
             this.totalMontant = totalMontant;
@@ -346,6 +393,11 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             this.username = username;
             this.password = password;
             this.codeDepot = codeDepot;
+            this.inputEditText = inputEditText;
+            this.txtUserName = txtUserName;
+            this.txtPassword = txtPassword;
+            this.nom_client = nom_client;
+            this.vendre = vendre;
 
         }
 
@@ -381,7 +433,9 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             SaveNewOperationAttente(libelle, totalMontant, prixRevien,
                                         dialog, view,
                                         catArticle, idTicket,
-                                        username, password, codeDepot);
+                                        username, password, codeDepot,
+                                        inputEditText, txtUserName, txtPassword,
+                                        nom_client, vendre);
 
             return null;
         }
@@ -395,12 +449,19 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         AlertDialog dialog;
         View view;
         int idTicket;
+        TextInputLayout inputEditText;
+        TextView txtUserName, txtPassword;
+        EditText nom_client;
+        Button vendre;
 
         public AsyncGetLatestOp(String libelle,double totalMontant,
                                 double prixRevien,AlertDialog dialog,
                                 View view, String catArticle,
                                 String userName, String password,
-                                int idTicket, String codeDepot) {
+                                int idTicket, String codeDepot,
+                                TextInputLayout inputEditText,
+                                TextView txtUserName, TextView txtPassword,
+                                EditText nom_client, Button vendre) {
 
             this.libelle = libelle;
             this.totalMontant = totalMontant;
@@ -412,6 +473,11 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
             this.password = password;
             this.idTicket = idTicket;
             this.codeDepot = codeDepot;
+            this.inputEditText = inputEditText;
+            this.txtUserName = txtUserName;
+            this.txtPassword = txtPassword;
+            this.nom_client = nom_client;
+            this.vendre = vendre;
         }
 
         @Override
@@ -431,7 +497,14 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 //                    .putExtra("num_operation", num_op)
 //                    .putExtra("libelle", libelle));
 
-            dialog.dismiss();
+            //dialog.dismiss();
+
+            txtUserName.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+            txtPassword.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+
+            inputEditText.setVisibility(View.VISIBLE);
+            nom_client.setEnabled(false);
+            vendre.setEnabled(false);
             //((Activity)view.getContext()).finish();
         }
 
@@ -530,6 +603,8 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                 if (response.isSuccessful())
                 {
                     Toast.makeText(context, "Vente effectuée avec succès",Toast.LENGTH_LONG).show();
+
+
                 }
             }
 
@@ -544,7 +619,10 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
     private void SaveNewOperationAttente(String libelle, double total,
                                          double prixRevien, AlertDialog dialog,
                                          View view, String catArticle, int idTicket,
-                                         String username, String password, String codeDepot)
+                                         String username, String password, String codeDepot,
+                                         TextInputLayout inputEditText,
+                                         TextView txtUserName, TextView txtPassword,
+                                         EditText nom_client, Button vendre)
     {
 
         OperationRepository operationRepository = OperationRepository.getInstance();
@@ -572,7 +650,9 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     Log.e("OPERATION",response.body().toString());
                     if(success){
                         new AsyncGetLatestOp(libelle, total, prixRevien, dialog, view,
-                                catArticle, username, password, idTicket, codeDepot).execute();
+                                catArticle, username, password, idTicket,
+                                codeDepot,inputEditText,
+                                txtUserName, txtPassword, nom_client, vendre).execute();
                     }else{
                         Toast.makeText(context, ""+message, Toast.LENGTH_SHORT).show();
                     }

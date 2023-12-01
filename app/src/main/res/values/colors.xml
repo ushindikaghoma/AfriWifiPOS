@@ -15,10 +15,10 @@
     <color name="bottomNavigationTextColor">#B2B2B2</color>
     <color name="bottomNavigationTintColor">#B2B2B2</color>
     <color name="bottomNavigationSelectedColor">#FC4926</color>
-    <color name="statusBarColor">#000</color>
+    <color name="statusBarColor">#91264B</color>
     <color name="whiteBodyColor">#FCFCFC</color>
-    <color name="darkTextColor">#020000</color>
-    <color name="frutorial_title">#4c4c4c</color>
+    <color name="darkTextColor">#9F3C35</color>
+    <color name="frutorial_title">#f0f0f0</color>
 
     <!--colors for light mode-->
 

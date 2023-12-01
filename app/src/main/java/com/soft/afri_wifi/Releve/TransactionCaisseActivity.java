@@ -70,6 +70,7 @@ public class TransactionCaisseActivity extends AppCompatActivity {
         progress_load_transaction = findViewById(R.id.transaction_progress_recycle);
         display_balance = findViewById(R.id.transaction_display_balance);
         recycler_liste_balance = findViewById(R.id.all_transaction_recycle);
+        TextView display_vente = findViewById(R.id.transaction_display_vente);
 
         recycler_liste_balance.setHasFixedSize(true);
         recycler_liste_balance.setLayoutManager(new LinearLayoutManager(this));
@@ -86,7 +87,7 @@ public class TransactionCaisseActivity extends AppCompatActivity {
         LoadSoldeCaisse(Integer.parseInt(pref_compte_user), progress_load_balance, display_balance);
 
         LoadListeReleveCompte(progress_load_transaction, recycler_liste_balance, Integer.parseInt(pref_compte_user),
-                "2010-01-01", todayDate);
+                "2010-01-01", todayDate, display_vente);
         date_debut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,8 +148,8 @@ public class TransactionCaisseActivity extends AppCompatActivity {
                         },
                         year, month, day);
 
-                LoadListeReleveCompte(progress_load_transaction, recycler_liste_balance, Integer.parseInt(num_compte_caisse_user),
-                        date_debut.getText().toString(), date_fin.getText().toString());
+                LoadListeReleveCompte(progress_load_transaction, recycler_liste_balance, Integer.parseInt(pref_compte_user),
+                        date_debut.getText().toString(), date_fin.getText().toString(), display_vente);
 
                 datePickerDialog.show();
             }
@@ -179,7 +180,7 @@ public class TransactionCaisseActivity extends AppCompatActivity {
     }
 
     public void LoadListeReleveCompte(ProgressBar loadTransactions, RecyclerView listeReleve,
-                                      int numCompte, String date_debut, String date_fin)
+                                      int numCompte, String date_debut, String date_fin, TextView vente)
     {
         Call<List<CompteResponse>> call_liste_releve = compteRepository.compteConnexion().getReleveCompteParDate(numCompte, date_debut, date_fin);
         loadTransactions.setVisibility(View.VISIBLE);
@@ -206,7 +207,7 @@ public class TransactionCaisseActivity extends AppCompatActivity {
 
                         _achat_total += response.body().get(a).getCredit();
 
-//                        textView_solde_jour.setText(String.format("$%s", response.body().get(a).getSolde()));
+                        vente.setText(String.format("CDF %s", _achat_total));
 //                        textView_solde_achat.setText(String.format("$%s", _achat_total));
 
                         list_local_releve.add(liste_releve);

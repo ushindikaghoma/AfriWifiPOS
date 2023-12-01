@@ -13,8 +13,6 @@
             <item
                 android:id="@+id/action_settings"
                 android:title="Configuration"/>
-            <item android:title="Synchroniser"
-                android:id="@+id/action_sync"/>
         </menu>
     </item>
 </menu>

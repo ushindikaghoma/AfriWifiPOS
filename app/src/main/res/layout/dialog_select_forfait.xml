@@ -103,6 +103,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="Null"
+                    android:textColor="@color/whiteBodyColor"
                     android:layout_weight="1"/>
 
             </LinearLayout>
@@ -126,6 +127,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="Null"
+                    android:textColor="@color/whiteBodyColor"
                     android:layout_weight="1"/>
 
             </LinearLayout>
@@ -135,9 +137,19 @@
                 android:layout_height="2dp"
                 android:background="@color/contentBodyColor"
                 android:layout_marginTop="10dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputNomClient"
+                style="@style/parent"
+                android:layout_marginTop="@dimen/loginViewsMargin">
+                <EditText
+                    android:id="@+id/editTextNomClient"
+                    style="@style/modifiedEditText"
+                    android:inputType="textPersonName"
+                    android:hint="Nom client"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputEmail"
+                android:id="@+id/textInputCommentaire"
                 style="@style/parent"
                 android:layout_marginTop="@dimen/loginViewsMargin">
                 <EditText
@@ -157,7 +169,7 @@
                     android:id="@+id/dialog_forfait_annuler_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Anuller"
+                    android:text="Terminer"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textStyle="bold"

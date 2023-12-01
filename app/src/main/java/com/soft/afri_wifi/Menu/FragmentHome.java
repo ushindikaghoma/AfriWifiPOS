@@ -93,12 +93,14 @@ public class FragmentHome extends Fragment {
         progressBarLoadTicket = root.findViewById(R.id.progress_load_forfait);
         //refreshListeAchat = root.findViewById(R.id.achat_swipe_torefresh);
         cardViewEmpty = root.findViewById(R.id.card_empty);
+        TextView userName = root.findViewById(R.id.ticketUserName);
+        TextView password = root.findViewById(R.id.ticketPassord);
 
         recyclerViewTicket.setHasFixedSize(true);
         recyclerViewTicket.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ticketRepository = TicketRepository.getInstance();
-        ticketAdapter = new TicketAdapter(getContext());
+        ticketAdapter = new TicketAdapter(getContext(), userName, password);
 
 
             LoadListeTicket(progressBarLoadTicket, recyclerViewTicket);

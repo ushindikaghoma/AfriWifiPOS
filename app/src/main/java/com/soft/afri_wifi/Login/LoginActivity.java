@@ -393,11 +393,13 @@ public class LoginActivity extends AppCompatActivity {
 
                         //Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
                         //Toast.makeText(LoginActivity.this, ""+myObject.getDepotAffecter(), Toast.LENGTH_SHORT).show();
+                        finish();
                     }
 
                     Toast.makeText(LoginActivity.this, "Connexion réussie avec succès", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this,ContentMenuActivity.class));
                     finish();
+                    startActivity(new Intent(LoginActivity.this,ContentMenuActivity.class));
+
                     db.setTransactionSuccessful();
                     db.endTransaction();
                     db.close();

@@ -2,21 +2,27 @@ package com.soft.afri_wifi.Menu;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.window.SplashScreen;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.soft.afri_wifi.MainActivity;
+import com.soft.afri_wifi.Models.currentUsers;
 import com.soft.afri_wifi.R;
 
 public class ContentMenuActivity extends AppCompatActivity {
@@ -26,7 +32,7 @@ public class ContentMenuActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mToogle;
     private DrawerLayout layout;
     final int ACTION_DECONNEXION = R.id.action_deconnexion;
-    final  int ACTION_SYNCRONISER = R.id.action_sync;
+    //final  int ACTION_SYNCRONISER = R.id.action_sync;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +81,44 @@ public class ContentMenuActivity extends AppCompatActivity {
                     replaceFragment(new FragmentDashboard());
                 }
 
+
+                return true;
+            }
+        });
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                int id = item.getItemId();
+
+                if (id == ACTION_DECONNEXION)
+                {
+                    AlertDialog alertDialogConfirm = new AlertDialog.Builder(ContentMenuActivity.this).create();
+                    alertDialogConfirm.setTitle("Confirmation");
+                    alertDialogConfirm.setMessage("Voulez-vous vraiment vous déconnecter ?");
+                    alertDialogConfirm.setCancelable(false);
+                    alertDialogConfirm.setButton(DialogInterface.BUTTON_NEGATIVE, "Annuler", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            alertDialogConfirm.dismiss();
+                        }
+                    });
+
+                    alertDialogConfirm.setButton(DialogInterface.BUTTON_POSITIVE, "Confirmer", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            alertDialogConfirm.dismiss();
+
+                            finish();
+                            currentUsers.setDeconnexionTrue(ContentMenuActivity.this);
+
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        }
+                    });
+
+                    alertDialogConfirm.show();
+                }
 
                 return true;
             }
