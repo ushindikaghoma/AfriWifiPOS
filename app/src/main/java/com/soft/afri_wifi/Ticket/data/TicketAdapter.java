@@ -59,7 +59,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
     ArrayList<ArticleResponse>list_local_ticket;
     public static SharedPreferences.Editor editor;
     String pref_code_depot, pref_compte_user, pref_compte_stock_user,nom_user, pref_mode_type,
-            todayDate, prefix_operation;
+            todayDate, todayDateSystem, prefix_operation;
 
     DataFromAPI dadataFromAPI;
     Calendar calendar;
@@ -80,7 +80,9 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
 
         calendar = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format_hour = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
         todayDate = format.format(calendar.getTime());
+        todayDateSystem = format_hour.format(calendar.getTime());
 
         pref_code_depot = preferences.getString("pref_depot_user","");
         pref_compte_user = preferences.getString("pref_compte_user","");
@@ -118,6 +120,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     _username.setText("");
                     _password.setText("");
                 }
+
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
@@ -182,33 +185,31 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                     @Override
                     public void onClick(View view) {
 
-
-
-                        if (username.getText().toString().trim().equals("Null")
-                                || password.getText().toString().trim().equals("Null")
-                                || username.getText().toString().trim().equals("")
-                                || password.getText().toString().trim().equals("") )
-                        {
-                            Toast.makeText(context, "Ticket invalide", Toast.LENGTH_SHORT).show();
-                        }else {
-
-                        }
                         if (nom_client.getText().toString().trim().equals(""))
                         {
                             Toast.makeText(context, "Veillez saisir le mom du client", Toast.LENGTH_SHORT).show();
                         }else
                         {
-                            String _libele = editTextLibele.getText().toString()+"à"+" "+nom_client.getText().toString();
 
-                            new AsyncCreateOperation(_libele, progressBar, list.get(position).getPrixTicket(),
-                                    list.get(position).getPrixTicket(), dialog, myView,
-                                    list.get(position).getCatArticle(),list.get(position).getIdTicket(),
-                                    username.getText().toString(), password.getText().toString(),
-                                    pref_code_depot, inputEditText, username,
-                                    password,nom_client, confirmer_vente).execute();
+                            if (username.getText().toString().trim().equals("Null")
+                                    || password.getText().toString().trim().equals("Null")
+                                    || username.getText().toString().trim().equals("")
+                                    || password.getText().toString().trim().equals(""))
+                            {
+                                Toast.makeText(context, "Ticket invalide", Toast.LENGTH_SHORT).show();
+                            }else {
+
+                                confirmer_vente.setEnabled(false);
+                                String _libele = editTextLibele.getText().toString()+"à"+" "+nom_client.getText().toString();
+
+                                new AsyncCreateOperation(_libele, progressBar, list.get(position).getPrixTicket(),
+                                        list.get(position).getPrixTicket(), dialog, myView,
+                                        list.get(position).getCatArticle(),list.get(position).getIdTicket(),
+                                        username.getText().toString(), password.getText().toString(),
+                                        pref_code_depot, inputEditText, username,
+                                        password,nom_client, confirmer_vente).execute();
+                            }
                         }
-
-
                     }
                 });
             }
@@ -553,7 +554,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
                 {
                     //Log.e("Ticket Mvt", ""+response.body());
 
-                   Reponse saveee = response.body();
+                    Reponse saveee = response.body();
                     boolean success = saveee.isSucces();
                     String message = saveee.getMessage();
                     Log.e("Ticket Mvt",response.body().toString());
@@ -635,7 +636,7 @@ public class TicketAdapter  extends RecyclerView.Adapter<TicketAdapter.TicketLis
         operationResponse.setNomUtilisateur(nom_user);
         operationResponse.setDateOperation(todayDate);
         operationResponse.setCodeEtatdeBesoin("0");
-        operationResponse.setDateSysteme(todayDate);
+        operationResponse.setDateSysteme(todayDateSystem);
         operationResponse.setValider(0);
         //operationAttenteResponse.setValiderPar("none");
         operationRepository.operationConnexion().SaveOperation(operationResponse).enqueue(new Callback<Reponse>()

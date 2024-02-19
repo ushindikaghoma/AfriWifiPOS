@@ -1,6 +1,7 @@
 package com.soft.afri_wifi.serveur;
 
 import android.content.Context;
+import android.util.Log;
 
 public class me_URL {
 
@@ -31,6 +32,8 @@ public class me_URL {
         phone_number = phone_number.replace(" ", "%20");
         password = password.replace(" ", "%20");
 
+        Log.e("URL_CONNECT", url+"/api/Utilisateur/GetSeConnecter?phone_number="+phone_number);
+
         return  url+"/api/Utilisateur/IsPhoneExist?phonenumber="+phone_number+"&password="+password;
         //return  "https://www.google.com/";
     }
@@ -39,7 +42,10 @@ public class me_URL {
     {
         phone_number = phone_number.replace(" ", "%20");
 
+        Log.e("URL_CONNECT", url+"/api/Utilisateur/GetSeConnecter?phone_number="+phone_number);
         return url+"/api/Utilisateur/GetSeConnecter?phone_number="+phone_number;
+        //return "http://afrisofttech-002-site38.btempurl.com/api/Utilisateur/GetSeConnecter?phone_number=MOISE";
+        //return "https://www.google.com";
     }
   public String getUserMysql(String username){
       return  url+"/api/Utilisateur/GetSeConnecter?phone_number="+username;

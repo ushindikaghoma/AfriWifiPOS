@@ -11,7 +11,7 @@ public class PostApiUrl {
       //public static final String URL = "http://192.168.1.50/WebApisGestionHotel/";// Lien de l apis
 //      public static final String URL = "http://10.0.1.50/TouchBistroIshango/";// Lien de l apis ISHANGO BAR
       //public static final String URL = "http://192.168.87.43/TouchBistroIshango/";// Lien de l apis ISHANGO BAR
-      //public static final String URL = "http://192.168.1.21/AfriWifi/";// Lien en local wifi pos
+      //public static final String URL = "http://192.168.1.44/AfriWifi/";// Lien en local wifi pos
       public static final String URL = "http://afrisofttech-002-site38.btempurl.com/";// Lien en ligne wifi pos
 //      public static final String URL = "http://192.168.252.43/TouchBistroIshango/";// Lien de l apis
 //      public static final String URL = "http://192.168.1.115/WebApisGestionHotel/";// Lien de l apis

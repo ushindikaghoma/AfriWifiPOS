@@ -8,9 +8,9 @@
         android:id="@+id/cardView11"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="0dp"
         app:cardCornerRadius="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,7 +19,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/image_user"
@@ -33,7 +33,7 @@
                 android:id="@+id/model_releve_libelle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="2dp"
                 android:fontFamily="@font/calibri"
                 android:text="Vente 1Giga à Moise"
                 android:textSize="16sp"

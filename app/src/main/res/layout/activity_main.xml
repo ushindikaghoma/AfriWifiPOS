@@ -10,15 +10,15 @@
         android:id="@+id/img"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/wifi_logo"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:src="@drawable/logo_yabiso" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="AFRISOFT WIFI POS"
-        android:layout_below="@id/img"
+        android:text="Afri-soft copyright"
         android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="30sp"/>
+        android:textColor="@color/colorAccent"
+        android:layout_alignParentBottom="true"
+        android:textSize="20sp"/>
 
 </RelativeLayout>

@@ -418,6 +418,7 @@ public class LoginActivity extends AppCompatActivity {
             //verfication des l'existance d'un utilisateur
             String responseReturn = "";
             String reponse = ConnexionAPI.getDataFromServer(new me_URL(LoginActivity.this).IsUserExist(username,password));
+            Log.e("url",reponse);
             //String reponse = ConnexionAPI.getDataFromServer("https://www.google.com/");
             //String reponse = new DataFromAPI(LoginActivity.this).IsUserExist(username,password);
             if(reponse.contains("true")){

@@ -10,8 +10,8 @@ android {
         applicationId = "com.soft.afri_wifi"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.1"
+        versionCode = 6
+        versionName = "1.4"
         multiDexEnabled = true
 
 
@@ -50,6 +50,8 @@ dependencies {
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("com.fasterxml.jackson.core:jackson-databind:2.7.3")
     implementation ("com.android.volley:volley:1.2.1")
+    implementation ("com.google.android.play:app-update:2.1.0")
+//    implementation ("com.google.android.play:core:1.10.3")
 
 
     testImplementation("junit:junit:4.13.2")
